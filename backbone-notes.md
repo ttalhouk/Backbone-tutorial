@@ -78,7 +78,7 @@ todoItem.save(); // Post request
 
 // Destroy Route
 todoItem.get('id');
-todoItem.destroy(); // destroys currnet todoItem
+todoItem.destroy(); // destroys current todoItem
 ```
 
 To convert object to JSON
