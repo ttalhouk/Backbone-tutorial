@@ -292,3 +292,88 @@ var TodoView = Backbone.View.extend({
   }
 });
 ```
+
+## Collections  
+
+Backbone has a collections class for handling groups of Models
+```javascript
+var TodoList = Backbone.Collection.extend({
+  model: TodoItem
+});
+var todoList = new TodoList();
+```
+The collection adds the following functionality
+
+* get number of models
+  - `todoList.length;`
+* add a model instance
+  - `todoList.add(todoItem1);`
+* get model instance at index 0
+  - `todoList.at(0);`
+* get by id 1
+  - `todoList.get(1);`
+* removing a model instance
+  - `todoList.remove(todoItem1);`
+
+**Reset**  
+
+For bulk updates
+```javascript
+var todos = [
+  {description: 'Pick up milk.', status: 'incomplete'},
+  {description: 'Get a car wash', status: 'incomplete'},
+  {description: 'Learn Backbone', status: 'incomplete'}
+];
+todoList.reset(todos);
+```
+
+You can also set a server in the collection so `.fetch()` will get the models from the server.
+```javascript
+var TodoList = Backbone.Collection.extend({
+  url: "/todos",
+});
+```
+
+You can also listen to collection events
+`todoList.on('reset', doThing);` triggers on `.reset() or .fetch()`
+Also listen to `'add' and 'remove'`
+
+**Iteration**
+
+```javascript
+todoList.forEach(function(todoItem){
+  alert(todoItem.get('description'));
+});
+```
+Other iterators provided by the underscore library
+
+forEach  
+reduce  
+reduceRight  
+find  
+filter  
+reject  
+every  
+all  
+some  
+include  
+invoke  
+max  
+min  
+sortBy  
+groupBy  
+sortedIndex  
+shuffle  
+toArray  
+size  
+first  
+initial  
+rest  
+last  
+without  
+indexOf  
+lastIndexOf  
+isEmpty  
+chain  
+
+[Underscore] http://documentcloud.github.com/backbone/#Collection-Underscore-Methods
