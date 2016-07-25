@@ -208,3 +208,87 @@ focusout hover keydown keypress load
 mousedown mouseenter mouseleave mousemove mouseout
 mouseover mouseup ready resize scroll
 select unload
+
+## Advanced Models and Views
+
+Adding checkbox to template
+```javascript
+var TodoView = Backbone.View.extend({
+  ...
+  template: _.template('<h3>' +
+    '<input type=checkbox ' +
+    '<% if(status === "complete") print("checked") %>/>' + // adds checkbox and check it if status complete
+    '<%= description %></h3>'),
+  render: function(){
+  var attributes = this.model.toJSON();
+  this.$el.html(this.template(attributes));} // sets html of element to template passing in model
+});
+```
+How to update model when checkbox changes...
+```javascript
+var TodoView = Backbone.View.extend({
+  events: {
+    "change input": "toggleStatus"
+  },
+  toggleStatus: function(){
+    this.model.toggleStatus(); // executes models toggleStatus
+  },
+  render: function(){
+    var attributes = this.model.toJSON();
+    this.$el.html(this.template(attributes));
+  }
+
+});
+
+// In Model
+
+var TodoItem = Backbone.Model.extend({
+  toggleStatus: function(){
+    if(this.get('status') === 'incomplete'){
+      this.set({'status': 'complete'});
+    }else{
+      this.set({'status': 'incomplete'});
+    }
+    this.save();// makes a put call to update the status
+  }
+});
+```
+
+Updating view to reflect status.  Add status class to template.
+
+```javascript
+var TodoView = Backbone.View.extend({
+  ...
+  template: _.template('<h3 class="<%= status %>">' + // status added as  class for CSS
+    '<input type=checkbox ' +
+    '<% if(status === "complete") print("checked") %>/>' + // adds checkbox and check it if status complete
+    '<%= description %></h3>'),
+  render: function(){
+  var attributes = this.model.toJSON();
+  this.$el.html(this.template(attributes));} // sets html of element to template passing in model
+});
+```
+
+However we still need to rerender the DOM on change.  Need to set an event.
+```javascript
+var TodoView = Backbone.View.extend({
+  events: {
+    "change input": "toggleStatus"
+  },
+  toggleStatus: function(){
+    this.model.toggleStatus();
+  },
+  initialize: function(){
+      this.model.on('change', this.render, this); // sets up model change callback to render
+      // the third argument 'this' sets the context of 'this' to be the todoView object not Window
+      this.model.on('destroy', this.remove, this); // updates on destroy also
+  },
+  render: function(){
+    var attributes = this.model.toJSON();
+    this.$el.html(this.template(attributes));
+  },
+  remove: function(){
+    this.$el.remove(); // removes element from View
+  }
+});
+```
