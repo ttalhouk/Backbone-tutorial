@@ -123,3 +123,88 @@ todoItem.off('change', doThing); // turns event off
 - `error` listens for when model saves or vadidation fails
 - `sync` listens for sync with server successful
 - `all` Any trggered event.
+
+## Views
+
+`.el` defaults to `<div></div>` but...
+
+``` javascript
+var SimpleView = Backbone.View.extend({tagName: 'li'}); // sets .el tag
+var simpleView = new SimpleView();
+
+console.log(SimpleView.el); // <li></li>
+```
+
+Other properties can be added as well
+
+```javascript
+var TodoView = Backbone.View.extend({
+  tagName: 'article',
+  id: 'todo-view',
+  className: 'todo'
+});
+
+var simpleView = new SimpleView();
+
+console.log(SimpleView.el); // <article class="todo" id="todo-view"></article>
+```
+The .el also allows for Jquery to target the element like this to add HTML...
+`todoView.$el.html();`
+
+**Using Templates**
+
+Backbone uses Underscore library to do tempting.
+```javascript
+var TodoView = Backbone.View.extend({
+  ...
+  template: _.template('<h3><%= description %></h3>'), // assigns template to view
+  render: function(){
+  var attributes = this.model.toJSON();
+  this.$el.html(this.template(attributes));} // sets html of element to template passing in model
+});
+
+var todoView = new TodoView({ model: todoItem });// sets model for view
+todoView.render();
+console.log(todoView.el);
+
+// <article id="todo-view" class="todo">
+//   <h3>Pick up milk</h3>
+// </article>
+```
+**View Events**
+```javascript
+var TodoView = Backbone.View.extend({
+  events: {
+    "click h3": "alertStatus" // sets the alert status for the h3 of this element
+  },
+  alertStatus: function(e){
+    alert('Hey you clicked the h3!');
+  }
+});
+
+// Views can have many events
+
+var DocumentView = Backbone.View.extend({
+
+events: {
+"dblclick"                :"open", // anywhere in the element
+"click .icon.doc"         :"select", // nested class
+"click .show_notes"       :"toggleNotes", // specific class
+"click .title .lock"      :"editAccessLevel", // multiple classes
+"mouseover .title .date"  :"showToolTip"
+ }, ...
+});
+// format
+var SampleView = Backbone.View.extend({
+  events: {
+    "<event> <selector>": "<method>"
+  },
+});
+```
+
+JQuery events available  
+change click dblclick focus focusin
+focusout hover keydown keypress load
+mousedown mouseenter mouseleave mousemove mouseout
+mouseover mouseup ready resize scroll
+select unload
