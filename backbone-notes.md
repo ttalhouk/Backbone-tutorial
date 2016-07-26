@@ -443,6 +443,29 @@ var TodoView = Backbone.View.extend({
   }
 ```
 
+## Router and History
+
+Routers map URL's to actions
+```javascript
+var router = new Backbone.Router({
+  routes: { "todos": 'index' }, // route /todos or #todos goes to index
+  index: function(){
+  //  ...
+} });
+
+
+var router = new Backbone.Router({
+  routes: { "todos/:id": 'show' }
+  // /(#)todos/(variable) gets passed to show with id = (variable)
+  show: function(id){ ... }
+})
+```
+**Route Matchers**
+
+* `search/:query` ex: `search/ruby` `query = 'ruby'`
+* `search/:query/p:page` ex: `search/ruby/p2` `query = 'ruby', page = 2`
+* `route/:query` ex: `route/ruby` `query = 'ruby'`
+* `route/:query` ex: `route/ruby` `query = 'ruby'`
 
 *Rendering View to top level app element*
 `$('#app').html(todoView.render().el);`
