@@ -377,3 +377,72 @@ isEmpty
 chain  
 
 [Underscore] http://documentcloud.github.com/backbone/#Collection-Underscore-Methods
+
+## Collection Views
+
+**Defining and Rendering Collection Views**
+
+```javascript
+var TodoListView = Backbone.View.extend({}); // Same View creation
+var todoListView = new TodoListView({collection: todoList}); // pass in a collection
+
+// Rendering
+render: function(){ this.collection.forEach(this.addOne, this);
+}, // calls addOne on each element passing the 'this' scope for each model,
+// not the collection
+addOne: function(todoItem){
+  var todoView = new TodoView({model: todoItem});
+  this.$el.append(todoView.render().el);
+}
+```
+Adding to the collection: Update collection view first by listening to the 'add' event or 'reset' if fetching from the server
+```javascript
+var TodoListView = Backbone.View.extend({
+  initialize: function(){
+    this.collection.on('add', this.addOne, this);
+    this.collection.on('reset', this.addAll, this);
+  },
+  addOne: function(todoItem){
+    var todoView = new TodoView({model: todoItem});
+    this.$el.append(todoView.render().el);
+  },
+  addAll: function(){
+    this.collection.forEach(this.addOne, this);
+  },
+  render: function(){
+    this.addAll(),
+  }
+});
+
+// when this gets added it will trigger the addOne function to add it to the DOM
+var newTodoItem = new TodoItem({
+  description: 'Take out trash.',
+  status: 'incomplete'
+});
+todoList.add(newTodoItem);
+```
+Removing item from Collection View  
+```
+var TodoListView = Backbone.View.extend({
+  initialize: function(){
+    ...
+    this.on('remove', this.hideModel);
+  },
+  hideModel: function(model){
+    model.trigger('hide'); // triggers the hide event in the Model-View
+  },
+...
+});
+// In the model view
+var TodoView = Backbone.View.extend({
+  initialize: function(){
+    this.model.on('hide', this.remove, this);
+  },
+  remove: function(){
+    this.$el.remove(); // removes element from View
+  }
+```
+
+
+*Rendering View to top level app element*
+`$('#app').html(todoView.render().el);`
